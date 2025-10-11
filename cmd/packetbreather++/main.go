@@ -18,7 +18,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Analyzer part
+	// TUI
 
 	if err := tui.StartTUI(*filePath); err != nil {
 		log.Error(err)

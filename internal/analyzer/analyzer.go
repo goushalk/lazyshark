@@ -1,8 +1,11 @@
 package analyzer
 
 import (
+	"encoding/hex"
 	"strings"
 
+	"github.com/google/gopacket"
+	"github.com/google/gopacket/pcap"
 	"packetB/internal/pcapreader"
 )
 
@@ -85,4 +88,31 @@ func Analyzer(file string) (*AnalyzerResult, error) {
 	}
 	return result, nil
 
+}
+
+func HexDumper(filePath string, packetIndex int) (string, error) {
+
+	data, err := pcap.OpenOffline(filePath)
+	if err != nil {
+		return "", err
+	}
+	defer data.Close()
+
+	packetSource := gopacket.NewPacketSource(data, data.LinkType())
+
+	var info string
+	count := 0
+	for pkt := range packetSource.Packets() {
+		if count == packetIndex {
+			if appLayer := pkt.ApplicationLayer(); appLayer != nil {
+				info = (hex.Dump(appLayer.Payload()))
+				break
+			} else {
+				noDat := "No Application Layer Data"
+				return noDat, nil
+			}
+		}
+		count++
+	}
+	return info, nil
 }
