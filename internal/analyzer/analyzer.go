@@ -1,11 +1,8 @@
 package analyzer
 
 import (
-	"encoding/hex"
 	"strings"
 
-	"github.com/google/gopacket"
-	"github.com/google/gopacket/pcap"
 	"packetB/internal/pcapreader"
 )
 
