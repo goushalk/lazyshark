@@ -1,0 +1,64 @@
+
+# Binaries and build output
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+*.o
+*.a
+*.lo
+*.la
+*.mod
+*.zip
+
+# Go build artifacts
+bin/
+build/
+dist/
+coverage.out
+
+# Dependency directories
+vendor/
+*.sum
+go.work
+go.work.sum
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# IDE/editor junk
+.vscode/
+.idea/
+*.swp
+*.swo
+*.bak
+*.tmp
+
+# Logs and runtime files
+*.log
+*.pid
+*.lock
+
+# Test files
+testdata/
+*.pcap
+*.pcapng
+
+# Temporary or debug files
+debug/
+tmp/
+scratch/
+*.dump
+*.trace
+
+# EWW/Hyprland specific stuff if you're testing GUI bits locally
+.env
+.cache/
+config.json
+
+# Ignore your compiled TUI binary (like lazyshark itself)
+lazyshark
