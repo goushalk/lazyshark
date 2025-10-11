@@ -62,3 +62,6 @@ config.json
 
 # Ignore your compiled TUI binary (like lazyshark itself)
 lazyshark
+
+docs/
+examples/
