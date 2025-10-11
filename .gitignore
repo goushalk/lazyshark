@@ -11,7 +11,6 @@
 *.a
 *.lo
 *.la
-*.mod
 *.zip
 
 # Go build artifacts
@@ -22,9 +21,6 @@ coverage.out
 
 # Dependency directories
 vendor/
-*.sum
-go.work
-go.work.sum
 
 # OS-specific
 .DS_Store
