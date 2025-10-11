@@ -39,7 +39,20 @@ func (m packListModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.height = msg.Height
 		m.table.SetWidth(m.width - baseStyle.GetHorizontalFrameSize())
 		m.table.SetHeight(m.height - baseStyle.GetVerticalFrameSize()) // Adjust height for border and potential status line
+
+	case tea.KeyMsg:
+		switch msg.String() {
+		case "enter":
+			selected := m.table.Cursor()
+			return m, func() tea.Msg {
+				return PacketSelectedMsg{
+					Index: selected,
+				}
+			}
+		}
+
 	}
+
 	m.table, cmd = m.table.Update(msg)
 	return m, cmd
 }

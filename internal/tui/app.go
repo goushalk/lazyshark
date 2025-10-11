@@ -7,11 +7,16 @@ import (
 )
 
 type AppModel struct {
-	packetList packListModel
-	//  add other models here for different views
-	// e.g., detailView detailViewModel
-	// hexView    hexViewModel
+	currentView string
+	packetList  packListModel
+	hexView     hexViewModel
 }
+
+type PacketSelectedMsg struct {
+	Index int
+}
+
+type BackToListMsg struct{}
 
 func (m AppModel) Init() tea.Cmd {
 	return m.packetList.Init()
