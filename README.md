@@ -22,9 +22,10 @@ A super simple pcap file visualizer.
 
 ## Usage
 
-### Demo video
+### Sample image
 
-![demo](./docs/lazyshark.gif)
+![image 1](./docs/lazyshark1.png)
+![image 2](./docs/lazy2.png)
 
 1. **Install Go** (if not already installed):  
    https://golang.org/doc/install
