@@ -19,12 +19,13 @@ A super simple pcap file visualizer.
 - Terminal User Interface (TUI) powered by [Bubbletea](https://github.com/charmbracelet/bubbletea) and [Bubbles](https://github.com/charmbracelet/bubbles).
 - Handles common keyboard actions (`q`, `ctrl+c` to quit).
 - Protocol and application-level summary (basic HTTP detection).
-
-### Sample image
+---
+## Sample image
 
 ![image 1](./docs/lazyshark1.png)
 ![image 2](./docs/lazy2.png)
 
+---
 ## Usage
 
 
