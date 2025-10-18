@@ -20,12 +20,13 @@ A super simple pcap file visualizer.
 - Handles common keyboard actions (`q`, `ctrl+c` to quit).
 - Protocol and application-level summary (basic HTTP detection).
 
-## Usage
-
 ### Sample image
 
 ![image 1](./docs/lazyshark1.png)
 ![image 2](./docs/lazy2.png)
+
+## Usage
+
 
 1. **Install Go** (if not already installed):  
    https://golang.org/doc/install
