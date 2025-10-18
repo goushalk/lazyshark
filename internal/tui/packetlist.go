@@ -42,7 +42,7 @@ func (m packListModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case tea.KeyMsg:
 		switch msg.String() {
-		case "enter":
+		case "h":
 			selected := m.table.Cursor()
 			return m, func() tea.Msg {
 				return PacketSelectedMsg{
