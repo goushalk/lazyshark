@@ -24,7 +24,7 @@ A super simple pcap file visualizer.
 
 ### Demo video
 
-![demo](./docs/lazyshark.mp4)
+![demo](./docs/lazyshark.gif)
 
 1. **Install Go** (if not already installed):  
    https://golang.org/doc/install
