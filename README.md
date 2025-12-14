@@ -47,6 +47,9 @@ A super simple pcap file visualizer.
    ```sh
    ./lazyshark -f path/to/your/file.pcap
    ```
+OR 
+
+Download the binary from the release
 
    - The TUI will display the packet list.
    - Use keyboard controls to navigate and quit.
@@ -57,6 +60,9 @@ A super simple pcap file visualizer.
 $ ./lazyshark -f example.pcap
 ```
 (You will see a terminal table with packet details.)
+
+- To see the ascii/hex view use 'h'
+- to come back to the table use 'backspace'
 
 ## Planned/Upcoming Features
 
