@@ -1,4 +1,4 @@
-module packetB
+module github.com/goushalk/lazyshark
 
 go 1.24.5
 

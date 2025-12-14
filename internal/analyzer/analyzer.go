@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	// "github.com/google/gopacket"
-	"packetB/internal/pcapreader"
+	"github.com/goushalk/lazyshark/internal/pcapreader"
 )
 
 type PacketSummary struct {

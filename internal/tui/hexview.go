@@ -1,8 +1,7 @@
 package tui
 
 import (
-	"packetB/internal/analyzer"
-
+	"github.com/goushalk/lazyshark/internal/analyzer"
 	tea "github.com/charmbracelet/bubbletea"
 )
 

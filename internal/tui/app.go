@@ -5,7 +5,7 @@ import (
 	"log"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"packetB/internal/analyzer"
+	"github.com/goushalk/lazyshark/internal/analyzer"
 )
 
 type AppModel struct {

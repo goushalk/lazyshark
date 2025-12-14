@@ -2,7 +2,7 @@ package tui
 
 import (
 	"fmt"
-	"packetB/internal/analyzer"
+	"github.com/goushalk/lazyshark/internal/analyzer"
 
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"

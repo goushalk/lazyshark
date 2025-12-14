@@ -6,7 +6,7 @@ import (
 
 	"github.com/charmbracelet/log"
 
-	"packetB/internal/tui"
+	"github.com/goushalk/lazyshark/internal/tui"
 )
 
 func main() {
