@@ -1,11 +1,9 @@
 package analyzer
 
 import (
-	"encoding/hex"
 	"strings"
 
-	"github.com/google/gopacket"
-	"github.com/google/gopacket/pcap"
+	// "github.com/google/gopacket"
 	"packetB/internal/pcapreader"
 )
 
@@ -16,8 +14,8 @@ type PacketSummary struct {
 	DstIp     string
 	Protocol  string
 	Length    int
-	Info      string
-	RawData   []byte
+	Info      string   // SAFE summary only
+	RawData   []byte   // FULL packet bytes
 }
 
 type AnalyzerResult struct {
@@ -43,76 +41,44 @@ func Analyzer(file string) (*AnalyzerResult, error) {
 			protocol = pkt.TransportLayer().LayerType().String()
 		}
 
-		payload := "no data"
-		if pkt.ApplicationLayer() != nil {
-			tem_payload := string(pkt.ApplicationLayer().Payload())
-			if strings.HasPrefix(tem_payload, "HTTP") || strings.Contains(tem_payload, "GET") || strings.Contains(tem_payload, "POST") {
-				payload = "HTTP"
-				protocol = "HTTP"
-			} else {
-				payload = tem_payload
+		info := "no application data"
+
+		if app := pkt.ApplicationLayer(); app != nil {
+			data := app.Payload()
+
+			if len(data) > 0 {
+				// VERY conservative text detection
+				if strings.HasPrefix(string(data), "GET") ||
+					strings.HasPrefix(string(data), "POST") ||
+					strings.HasPrefix(string(data), "HTTP") {
+					info = "HTTP"
+					protocol = "HTTP"
+				} else {
+					info = "binary payload"
+				}
 			}
 		}
 
-		networkLayer := pkt.NetworkLayer()
-		if networkLayer == nil {
-			summary := PacketSummary{
-				Number:    i + 1,
-				TimeStamp: pkt.Metadata().Timestamp.String(),
-				SrcIp:     "N/A",
-				DstIp:     "N/A",
-				Protocol:  protocol,
-				Length:    pkt.Metadata().Length,
-				Info:      payload,
-				RawData:   pkt.Data(),
-			}
-			result.Packets = append(result.Packets, summary)
-			result.ProtocolCounts[protocol]++
-			continue
-
+		src, dst := "N/A", "N/A"
+		if net := pkt.NetworkLayer(); net != nil {
+			src = net.NetworkFlow().Src().String()
+			dst = net.NetworkFlow().Dst().String()
 		}
 
 		summary := PacketSummary{
 			Number:    i + 1,
 			TimeStamp: pkt.Metadata().Timestamp.String(),
-			SrcIp:     networkLayer.NetworkFlow().Src().String(),
-			DstIp:     networkLayer.NetworkFlow().Dst().String(),
+			SrcIp:     src,
+			DstIp:     dst,
 			Protocol:  protocol,
 			Length:    pkt.Metadata().Length,
-			Info:      payload,
+			Info:      info,
 			RawData:   pkt.Data(),
 		}
 
 		result.Packets = append(result.Packets, summary)
-		result.ProtocolCounts[summary.Protocol]++
+		result.ProtocolCounts[protocol]++
 	}
+
 	return result, nil
-
-}
-
-func HexDumper(filePath string, packetIndex int) (string, error) {
-
-	data, err := pcap.OpenOffline(filePath)
-	if err != nil {
-		return "", err
-	}
-	defer data.Close()
-
-	packetSource := gopacket.NewPacketSource(data, data.LinkType())
-
-	var info string
-	count := 0
-	for pkt := range packetSource.Packets() {
-		if count == packetIndex {
-			if appLayer := pkt.ApplicationLayer(); appLayer != nil {
-				info = (hex.Dump(appLayer.Payload()))
-				break
-			} else {
-				noDat := "No Application Layer Data"
-				return noDat, nil
-			}
-		}
-		count++
-	}
-	return info, nil
 }

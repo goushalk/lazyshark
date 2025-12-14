@@ -1,9 +1,10 @@
 package tui
 
 import (
-	tea "github.com/charmbracelet/bubbletea"
 
 	"log"
+
+	tea "github.com/charmbracelet/bubbletea"
 	"packetB/internal/analyzer"
 )
 
@@ -29,32 +30,31 @@ func (m *AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		switch msg.String() {
-		case "ctrl+c", "q":
+		if msg.String() == "ctrl+c" || msg.String() == "q" {
 			return m, tea.Quit
 		}
 	}
 
 	switch m.currentView {
+
 	case "list":
-		// delegate update to packetList
 		var updated tea.Model
 		updated, cmd = m.packetList.Update(msg)
 		m.packetList = updated.(packListModel)
 
-		// check if PacketSelectedMsg came from packetList
-		if packetMsg, ok := msg.(PacketSelectedMsg); ok {
-			m.currentView = "hex"
-			m.hexView.Load(m.filePath, packetMsg.Index) // give the hex view the data
+		if pktMsg, ok := msg.(PacketSelectedMsg); ok {
+			if pktMsg.Index >= 0 && pktMsg.Index < len(m.packetList.allpacket) {
+				pkt := m.packetList.allpacket[pktMsg.Index]
+				m.hexView.Load(pkt.RawData)
+				m.currentView = "hex"
+			}
 		}
 
 	case "hex":
-		// delegate update to hexView
 		var updated tea.Model
 		updated, cmd = m.hexView.Update(msg)
 		m.hexView = updated.(hexViewModel)
 
-		// check if BackToListMsg came from hexView
 		if _, ok := msg.(BackToListMsg); ok {
 			m.currentView = "list"
 		}
@@ -64,23 +64,19 @@ func (m *AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m AppModel) View() string {
-	switch m.currentView {
-	case "hex":
+	if m.currentView == "hex" {
 		return m.hexView.View()
-
-	default:
-		return m.packetList.View()
 	}
+	return m.packetList.View()
 }
 
 func NewAppModel(filePath string) (AppModel, error) {
-	analyzerResult, err := analyzer.Analyzer(filePath)
+	result, err := analyzer.Analyzer(filePath)
 	if err != nil {
 		log.Fatalf("Error analyzing pcap file: %v", err)
-		return AppModel{}, err
 	}
 
-	packetListModel := NewPacketListModel(*analyzerResult)
+	packetListModel := NewPacketListModel(*result)
 
 	return AppModel{
 		filePath:    filePath,
@@ -96,9 +92,7 @@ func StartTUI(filePath string) error {
 		return err
 	}
 
-	p := tea.NewProgram(&initialModel, tea.WithAltScreen(), tea.WithMouseCellMotion())
-	if _, err := p.Run(); err != nil {
-		log.Fatalf("Error running program: %v", err)
-	}
-	return nil
+	p := tea.NewProgram(&initialModel, tea.WithAltScreen())
+	_, err = p.Run()
+	return err
 }
