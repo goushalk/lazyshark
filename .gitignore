@@ -58,6 +58,6 @@ config.json
 
 # Ignore your compiled TUI binary (like lazyshark itself)
 lazyshark
-
+packetbreather++
 docs/
 examples/

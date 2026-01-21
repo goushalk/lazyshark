@@ -3,7 +3,8 @@ package analyzer
 import (
 	"strings"
 
-	// "github.com/google/gopacket"
+	"github.com/google/gopacket/layers"
+
 	"packetB/internal/pcapreader"
 )
 
@@ -14,8 +15,8 @@ type PacketSummary struct {
 	DstIp     string
 	Protocol  string
 	Length    int
-	Info      string   // SAFE summary only
-	RawData   []byte   // FULL packet bytes
+	Info      string
+	RawData   []byte
 }
 
 type AnalyzerResult struct {
@@ -36,33 +37,54 @@ func Analyzer(file string) (*AnalyzerResult, error) {
 
 	for i, pkt := range packets {
 
-		protocol := "UNKNOWN"
-		if pkt.TransportLayer() != nil {
-			protocol = pkt.TransportLayer().LayerType().String()
+		// ---------------------------
+		// Network layer (IPv4 / IPv6)
+		// ---------------------------
+		src, dst := "N/A", "N/A"
+
+		if ip4 := pkt.Layer(layers.LayerTypeIPv4); ip4 != nil {
+			ip := ip4.(*layers.IPv4)
+			src = ip.SrcIP.String()
+			dst = ip.DstIP.String()
+		} else if ip6 := pkt.Layer(layers.LayerTypeIPv6); ip6 != nil {
+			ip := ip6.(*layers.IPv6)
+			src = ip.SrcIP.String()
+			dst = ip.DstIP.String()
 		}
 
+		// ---------------------------
+		// Transport layer
+		// ---------------------------
+		transport := "UNKNOWN"
+		if tl := pkt.TransportLayer(); tl != nil {
+			transport = tl.LayerType().String()
+		}
+
+		// ---------------------------
+		// Application / Info
+		// ---------------------------
 		info := "no application data"
+		appProto := ""
 
 		if app := pkt.ApplicationLayer(); app != nil {
 			data := app.Payload()
 
 			if len(data) > 0 {
-				// VERY conservative text detection
-				if strings.HasPrefix(string(data), "GET") ||
-					strings.HasPrefix(string(data), "POST") ||
-					strings.HasPrefix(string(data), "HTTP") {
-					info = "HTTP"
-					protocol = "HTTP"
+				// Safe HTTP detection only
+				if strings.HasPrefix(string(data), "GET ") ||
+					strings.HasPrefix(string(data), "POST ") ||
+					strings.HasPrefix(string(data), "HTTP/") {
+					appProto = "HTTP"
+					info = "HTTP request/response"
 				} else {
 					info = "binary payload"
 				}
 			}
 		}
 
-		src, dst := "N/A", "N/A"
-		if net := pkt.NetworkLayer(); net != nil {
-			src = net.NetworkFlow().Src().String()
-			dst = net.NetworkFlow().Dst().String()
+		protocol := transport
+		if appProto != "" {
+			protocol = transport + "/" + appProto
 		}
 
 		summary := PacketSummary{
